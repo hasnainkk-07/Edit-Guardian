@@ -1,5 +1,4 @@
 import html
-import random
 from telegram import Update, Bot
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from config import TELEGRAM_TOKEN, OWNER_ID
@@ -7,7 +6,7 @@ from config import TELEGRAM_TOKEN, OWNER_ID
 def start(update: Update, context: CallbackContext):
     user = update.effective_user
     mention = f"<a href='tg://user?id={user.id}'>{html.escape(user.first_name)}</a>"
-    update.message.reply_html(f'Hello! {mention}! I am Edit Guardian bot I delete Edited message expect my creator')
+    update.message.reply_html(f'Hello! {mention}! I am Edit Guardian bot I delete Edited message Expect my creator')
 
 def check_edit(update: Update, context: CallbackContext):
     bot: Bot = context.bot
