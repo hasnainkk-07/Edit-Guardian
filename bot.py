@@ -7,7 +7,7 @@ from config import TELEGRAM_TOKEN, OWNER_ID
 def start(update: Update, context: CallbackContext):
     user = update.effective_user
     mention = f"<a href='tg://user?id={user.id}'>{html.escape(user.first_name)}</a>"
-    update.message.reply_html(f'Hello! I am a bot that deletes edited messages except those from the owner. Welcome, {mention}!')
+    update.message.reply_html(f'Hello! {mention}! I am Edit Guardian bot I delete Edited message expect my creator')
 
 def check_edit(update: Update, context: CallbackContext):
     bot: Bot = context.bot
@@ -31,7 +31,7 @@ def check_edit(update: Update, context: CallbackContext):
             bot.delete_message(chat_id=chat_id, message_id=message_id)
             
             # Send a message notifying about the deletion
-            bot.send_message(chat_id=chat_id, text=f"{user_mention} just edited a message. I deleted their original message.", parse_mode='HTML')
+            bot.send_message(chat_id=chat_id, text=f"{user_mention} 𝗷𝘂𝘀𝘁 𝗲𝗱𝗶𝘁 𝗮 𝗺𝗲𝘀𝘀𝗮𝗴𝗲. 𝗜 𝗱𝗲𝗹𝗲𝘁𝗲 𝗵𝗶𝘀 𝗲𝗱𝗶𝘁𝗲𝗱 𝗺𝗲𝘀𝘀𝗮𝗴𝗲.", parse_mode='HTML')
 
 def main():
     updater = Updater(TELEGRAM_TOKEN, use_context=True)
