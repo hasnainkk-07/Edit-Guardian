@@ -1,0 +1,23 @@
+{
+  "name": "discord-bot-example",
+  "description": "Discord bot example using Discord.py",
+  "repository": "https://github.com/your-username/your-repo",
+  "keywords": ["discord", "bot", "python"],
+  "env": {
+    "DISCORD_TOKEN": {
+      "description": "Discord bot token",
+      "required": true
+    },
+    "OWNER_ID": {
+      "description": "Your Discord user ID (owner)",
+      "required": true
+    }
+  },
+  "addons": [],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "stack": "heroku-20"
+}
