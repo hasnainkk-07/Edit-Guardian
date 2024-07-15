@@ -1,10 +1,10 @@
 {
-  "name": "discord-bot-example",
-  "description": "Discord bot example using Discord.py",
-  "repository": "https://github.com/your-username/your-repo",
+  "name":  "Telegram edit message delete bot",
+  "description": "Telegram bot example using python-telegram-bot",
+  "repository": "https://github.com//your-repo",
   "keywords": ["discord", "bot", "python"],
   "env": {
-    "DISCORD_TOKEN": {
+    "TELEGRAM_TOKEN": {
       "description": "Discord bot token",
       "required": true
     },
@@ -19,5 +19,5 @@
       "url": "heroku/python"
     }
   ],
-  "stack": "heroku-20"
+  "stack": "heroku-22"
 }
