@@ -9,3 +9,6 @@ A telegram bot made by python
 + [ʜᴀsɴᴀɪɴ ᴋʜᴀɴ](https://github.com/hasnainkk-07)
 + [🄺🄰🅁🄼🄰](https://github.com/Infamous-Hydra)
 + [sᴜᴋᴜɴᴀ 💔](https://github.com/ImmortalXnetwork)
+
+
+> Try this bot [@EditGuardian_Bot](https://t.me/EditGuardian_Bot); it's made with this repository for demonstration purposes. 
