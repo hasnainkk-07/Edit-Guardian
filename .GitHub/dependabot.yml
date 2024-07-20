@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    open-pull-requests-limit: 5
+    assignees:
+      - "hasnainkk-07"
+    reviewers:
+      - "hasnainkk-07"
+    labels:
+      - "dependencies"
+      - "automated-update"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "actions"
+      include: "scope"
+    open-pull-requests-limit: 5
+    assignees:
+      - "hasnainkk-07"
+    reviewers:
+      - "hasnainkk-07"
+    labels:
+      - "actions"
+      - "automated-update"
