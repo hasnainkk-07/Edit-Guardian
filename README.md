@@ -1,5 +1,5 @@
 # Edit-Guardian
-A telegram bot made by python 
+ telegram bot made by python for telegram group edited message management bot 
 
 
 ### HEROKU DEVELOPMENT 
