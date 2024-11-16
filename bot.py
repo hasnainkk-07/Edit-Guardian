@@ -17,7 +17,7 @@ api_hash = "d927c13beaaf5110f25c505b7c071273"
 bot_token = "7391930298:AAEGSbfUFsFErfue_zamTTYhDYOhZAbxuBM"
 
 app = Client(
-    "EditDeleterBot",
+    "hasnainkk",
     api_id=api_id,
     api_hash=api_hash,
     bot_token=bot_token,
