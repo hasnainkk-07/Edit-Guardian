@@ -37,10 +37,11 @@ async def approve_user(client, message: Message):
         return await message.reply_text("Reply to the user you want to approve.")
     
     user_id = message.reply_to_message.from_user.id
+    first_name = message.reply_to_message.from_user.first_name  # Store first name
     chat_id = message.chat.id
 
-    approved_users.insert_one({"chat_id": chat_id, "user_id": user_id})
-    await message.reply_text(f"User {user_id} has been approved.")
+    approved_users.insert_one({"chat_id": chat_id, "user_id": user_id, "first_name": first_name})
+    await message.reply_text(f"User {first_name} has been approved.")
 
 @app.on_message(filters.command("unapprove") & admin_filter)
 async def unapprove_user(client, message: Message):
@@ -57,7 +58,7 @@ async def unapprove_user(client, message: Message):
 async def list_approved_users(client, message: Message):
     chat_id = message.chat.id
     users = approved_users.find({"chat_id": chat_id})
-    user_list = "\n".join([str(user["user_id"]) for user in users])
+    user_list = "\n".join([f"{user['first_name']} ({user['user_id']})" for user in users])
     await message.reply_text(f"Approved Users:\n{user_list if user_list else 'No approved users.'}")
 
 @app.on_message(filters.command("gban") & filters.user(OWNER_ID))
@@ -132,10 +133,13 @@ async def delete_edited_message(client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
 
+    # Fetch user's first name
+    user_first_name = message.from_user.first_name
+
     if user_id in SUDO_USERS or user_id == OWNER_ID or approved_users.find_one({"chat_id": chat_id, "user_id": user_id}):
         # Don't delete message if it's from owner, sudo users, or approved users
         return
-
+    # Delete the edited message
     await message.delete()
-
-app.run()
+    # Mention the user with their first name and user ID
+    await message.reply_text(f"{user_first_name} (ID: {user_id}) just edited a message. I deleted their message.")
