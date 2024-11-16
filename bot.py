@@ -28,13 +28,31 @@ OWNER_ID = 6346273488  # Replace with your Telegram user ID
 SUDO_USERS = [1805959544, 1284920298, 5907205317, 5881613383]  # Sudo users list
 
 
+
+
 # Function to create a mention for a user
 def create_mention(user_id, first_name):
+
     return f"<a href='tg://user?id={user_id}'>{html.escape(first_name)}</a>"
-    
+
+@app.on_edited_message(filters.group)
+async def delete_edited_message(client, message: Message):
+    chat_id = message.chat.id
     user_id = message.from_user.id
 
-mention = create_mention(user_id, message.from_user.first_name)
+    # Use the mention function
+    mention = create_mention(user_id, message.from_user.first_name)
+
+    if user_id in SUDO_USERS or user_id == OWNER_ID or approved_users.find_one({"chat_id": chat_id, "user_id": user_id}):
+        # Don't delete the message if it's from owner, sudo users, or approved users
+        return
+    
+    # Delete the edited message
+    await message.delete()
+    
+    # Send a reply with the user's first name and user ID
+    await message.reply_text(f"{mention} (ID: {user_id}) just edited a message. I deleted their message.", parse_mode="html")
+    
 
 # Admin check function (to be used in the filter)
 async def is_admin(client, message: Message):
@@ -163,24 +181,6 @@ async def stats(client, message: Message):
     user_count = db.users.count_documents({})
     chat_count = db.chats.count_documents({})
     await message.reply_text(f"Stats:\nUsers: {user_count}\nChats: {chat_count}")
-
-@app.on_edited_message(filters.group)
-async def delete_edited_message(client, message: Message):
-    chat_id = message.chat.id
-    user_id = message.from_user.id
-
-    # Use the mention function
-    mention = create_mention(user_id, message.from_user.first_name)
-
-    if user_id in SUDO_USERS or user_id == OWNER_ID or approved_users.find_one({"chat_id": chat_id, "user_id": user_id}):
-        # Don't delete the message if it's from owner, sudo users, or approved users
-        return
-    
-    # Delete the edited message
-    await message.delete()
-    
-    # Send a reply with the user's first name and user ID
-    await message.reply_text(f"{mention} (ID: {user_id}) just edited a message. I deleted their message.", parse_mode="html")
 
 
 app.run()
