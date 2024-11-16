@@ -2,10 +2,11 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from pymongo import MongoClient
 from admins import admin_filter  # Assuming you've imported admin_filter from an 'admins' module
-from html import escape 
+import html
+
 # MongoDB setup
 mongo = MongoClient("mongodb+srv://bikash:bikash@bikash.3jkvhp7.mongodb.net/?retryWrites=true&w=majority")  # Replace with your MongoDB URI
-db = mongo["EditDeleterBot"]
+db = mongo["hasnainkk"]
 
 # Collections
 approved_users = db["approved_users"]
@@ -37,11 +38,13 @@ async def approve_user(client, message: Message):
         return await message.reply_text("Reply to the user you want to approve.")
     
     user_id = message.reply_to_message.from_user.id
-    first_name = message.reply_to_message.from_user.first_name  # Store first name
     chat_id = message.chat.id
+    first_name = message.reply_to_message.from_user.first_name
 
-    approved_users.insert_one({"chat_id": chat_id, "user_id": user_id, "first_name": first_name})
-    await message.reply_text(f"User {first_name} has been approved.")
+    approved_users.insert_one({"chat_id": chat_id, "user_id": user_id})
+    
+    user_mention = f"<a href='tg://user?id={user_id}'>{html.escape(first_name)}</a>"
+    await message.reply_text(f"User {user_mention} has been approved.")
 
 @app.on_message(filters.command("unapprove") & admin_filter)
 async def unapprove_user(client, message: Message):
@@ -50,76 +53,38 @@ async def unapprove_user(client, message: Message):
     
     user_id = message.reply_to_message.from_user.id
     chat_id = message.chat.id
+    first_name = message.reply_to_message.from_user.first_name
 
     approved_users.delete_one({"chat_id": chat_id, "user_id": user_id})
-    await message.reply_text(f"User {user_id} has been unapproved.")
+    
+    user_mention = f"<a href='tg://user?id={user_id}'>{html.escape(first_name)}</a>"
+    await message.reply_text(f"User {user_mention} has been unapproved.")
 
 @app.on_message(filters.command("approved"))
 async def list_approved_users(client, message: Message):
     chat_id = message.chat.id
     users = approved_users.find({"chat_id": chat_id})
-    user_list = "\n".join([f"{user['first_name']} ({user['user_id']})" for user in users])
-    await message.reply_text(f"Approved Users:\n{user_list if user_list else 'No approved users.'}")
-
-@app.on_message(filters.command("gban") & filters.user(OWNER_ID))
-async def gban_user(client, message: Message):
-    if len(message.command) < 2:
-        return await message.reply_text("Usage: /gban <user_id> <reason>")
-    
-    args = message.command[1:]
-    user_id = int(args[0])
-    reason = " ".join(args[1:]) if len(args) > 1 else "No reason provided"
-
-    gban_collection.insert_one({"user_id": user_id, "reason": reason})
-
-    async for dialog in client.iter_dialogs():
-        if dialog.chat.type in ["group", "supergroup"]:
-            try:
-                await client.kick_chat_member(dialog.chat.id, user_id)
-            except Exception:
-                continue
-
-    await message.reply_text(f"User {user_id} has been globally banned.\nReason: {reason}")
-
-@app.on_message(filters.command("ungban") & filters.user(OWNER_ID))
-async def ungban_user(client, message: Message):
-    if len(message.command) < 2:
-        return await message.reply_text("Usage: /ungban <user_id>")
-    
-    user_id = int(message.command[1])
-
-    gban_collection.delete_one({"user_id": user_id})
-    await message.reply_text(f"User {user_id} has been globally unbanned.")
-
-@app.on_message(filters.command("checkban"))
-async def check_ban(client, message: Message):
-    if len(message.command) < 2:
-        return await message.reply_text("Usage: /checkban <user_id>")
-    
-    user_id = int(message.command[1])
-    ban_info = gban_collection.find_one({"user_id": user_id})
-
-    if ban_info:
-        await message.reply_text(f"User {user_id} is globally banned.\nReason: {ban_info['reason']}")
+    if users:
+        user_list = "\n".join([f"<a href='tg://user?id={user['user_id']}'>{html.escape(client.get_users(user['user_id']).first_name)}</a>" for user in users])
+        await message.reply_text(f"Approved Users:\n{user_list}", parse_mode="HTML")
     else:
-        await message.reply_text(f"User {user_id} is not globally banned.")
-
-@app.on_message(filters.command("addsudo") & filters.user(OWNER_ID))
-async def add_sudo_user(client, message: Message):
-    if len(message.command) < 2:
-        return await message.reply_text("Usage: /addsudo <user_id>")
-    
-    user_id = int(message.command[1])
-    if user_id not in SUDO_USERS:
-        SUDO_USERS.append(user_id)
-        await message.reply_text(f"User {user_id} has been added to the sudo list.")
-    else:
-        await message.reply_text(f"User {user_id} is already in the sudo list.")
+        await message.reply_text("No approved users.")
 
 @app.on_message(filters.command("sudolist") & filters.user(OWNER_ID))
 async def sudo_list(client, message: Message):
-    sudo_list_str = "\n".join(str(user_id) for user_id in SUDO_USERS)
-    await message.reply_text(f"Sudo Users List:\n{sudo_list_str if sudo_list_str else 'No sudo users.'}")
+    sudo_list_str = ""
+    for user_id in SUDO_USERS:
+        try:
+            user = await client.get_users(user_id)
+            first_name = user.first_name
+            user_mention = f"<a href='tg://user?id={user_id}'>{html.escape(first_name)}</a>"
+            sudo_list_str += f"{user_mention}\n"
+        except Exception as e:
+            continue
+    if sudo_list_str:
+        await message.reply_text(f"Sudo Users List:\n{sudo_list_str}", parse_mode="HTML")
+    else:
+        await message.reply_text("No sudo users.")
 
 @app.on_message(filters.command("stats") & filters.user(OWNER_ID))
 async def stats(client, message: Message):
@@ -128,24 +93,17 @@ async def stats(client, message: Message):
     chat_count = db.chats.count_documents({})
     await message.reply_text(f"Stats:\nUsers: {user_count}\nChats: {chat_count}")
 
-#from html import escape
-
 @app.on_edited_message(filters.group)
 async def delete_edited_message(client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
 
-    # Create the mention for the user
-    user_mention = f"<a href='tg://user?id={user_id}'>{escape(message.from_user.first_name)}</a>"
-
     if user_id in SUDO_USERS or user_id == OWNER_ID or approved_users.find_one({"chat_id": chat_id, "user_id": user_id}):
         # Don't delete message if it's from owner, sudo users, or approved users
         return
 
-    # Delete the edited message
+    user_mention = f"<a href='tg://user?id={user_id}'>{html.escape(message.from_user.first_name)}</a>"
+    await message.reply_text(f"{user_mention} just edited a message. I deleted their message.", parse_mode="HTML")
     await message.delete()
 
-    # Send a message with the user mention
-    await message.reply_text(f"{user_mention} just edited a message. I deleted their message.", parse_mode="HTML")
-
-app.run() # Client Rin
+app.run()
