@@ -31,7 +31,8 @@ SUDO_USERS = [1805959544, 1284920298, 5907205317, 5881613383]  # Sudo users list
 # Function to create a mention for a user
 def create_mention(user_id, first_name):
     return f"<a href='tg://user?id={user_id}'>{html.escape(first_name)}</a>"
-
+    
+    user_id = message.from_user.id
 
 mention = create_mention(user_id, message.from_user.first_name)
 
@@ -44,7 +45,7 @@ async def is_admin(client, message: Message):
 async def start(client, message: Message):
     # Mention user by first name
     user_first_name = message.from_user.first_name
-    await message.reply_text(f"Hello, {mention} ! Welcome to the Edit Deleter Bot. Use /help for commands.")
+    await message.reply_text(f"Hello, {mention} ! Welcome to the Edit Deleter Bot. Use /help for commands.", parse_mode="html")
 
 @app.on_message(filters.command("help"))
 async def help(client, message: Message):
