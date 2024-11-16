@@ -1,3 +1,4 @@
+import html
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from pymongo import MongoClient
@@ -26,10 +27,44 @@ app = Client(
 OWNER_ID = 6346273488  # Replace with your Telegram user ID
 SUDO_USERS = [1805959544, 1284920298, 5907205317, 5881613383]  # Sudo users list
 
+
+# Function to create a mention for a user
+def create_mention(user_id, first_name):
+    return f"<a href='tg://user?id={user_id}'>{html.escape(first_name)}</a>"
+
+
+mention = create_mention(user_id, message.from_user.first_name)
+
 # Admin check function (to be used in the filter)
 async def is_admin(client, message: Message):
     chat_member = await client.get_chat_member(message.chat.id, message.from_user.id)
     return chat_member.status in ["administrator", "creator"]
+
+@app.on_message(filters.command("start"))
+async def start(client, message: Message):
+    # Mention user by first name
+    user_first_name = message.from_user.first_name
+    await message.reply_text(f"Hello, {mention} ! Welcome to the Edit Deleter Bot. Use /help for commands.")
+
+@app.on_message(filters.command("help"))
+async def help(client, message: Message):
+    # Provide help information
+    help_text = (
+        "This bot helps you with approving/unapproving users and global banning.\n"
+        "Here are the available commands:\n\n"
+        "/start - Start message\n"
+        "/help - Get help information\n"
+        "/approve - Approve a user (reply to their message)\n"
+        "/unapprove - Unapprove a user (reply to their message)\n"
+        "/approved - List approved users\n"
+        "/gban <user_id> <reason> - Globally ban a user\n"
+        "/ungban <user_id> - Unban a globally banned user\n"
+        "/checkban <user_id> - Check if a user is globally banned\n"
+        "/addsudo <user_id> - Add a user to sudo list\n"
+        "/sudolist - List all sudo users\n"
+        "/stats - Get bot stats"
+    )
+    await message.reply_text(help_text)
 
 @app.on_message(filters.command("approve") & admin_filter)
 async def approve_user(client, message: Message):
@@ -133,13 +168,18 @@ async def delete_edited_message(client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
 
-    # Fetch user's first name
-    user_first_name = message.from_user.first_name
+    # Use the mention function
+    mention = create_mention(user_id, message.from_user.first_name)
 
     if user_id in SUDO_USERS or user_id == OWNER_ID or approved_users.find_one({"chat_id": chat_id, "user_id": user_id}):
-        # Don't delete message if it's from owner, sudo users, or approved users
+        # Don't delete the message if it's from owner, sudo users, or approved users
         return
+    
     # Delete the edited message
     await message.delete()
-    # Mention the user with their first name and user ID
-    await message.reply_text(f"{user_first_name} (ID: {user_id}) just edited a message. I deleted their message.")
+    
+    # Send a reply with the user's first name and user ID
+    await message.reply_text(f"{mention} (ID: {user_id}) just edited a message. I deleted their message.", parse_mode="html")
+
+
+app.run()
