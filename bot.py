@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from pymongo import MongoClient
 from admins import admin_filter  # Assuming you've imported admin_filter from an 'admins' module
-
+from html import escape 
 # MongoDB setup
 mongo = MongoClient("mongodb+srv://bikash:bikash@bikash.3jkvhp7.mongodb.net/?retryWrites=true&w=majority")  # Replace with your MongoDB URI
 db = mongo["EditDeleterBot"]
@@ -128,18 +128,24 @@ async def stats(client, message: Message):
     chat_count = db.chats.count_documents({})
     await message.reply_text(f"Stats:\nUsers: {user_count}\nChats: {chat_count}")
 
+#from html import escape
+
 @app.on_edited_message(filters.group)
 async def delete_edited_message(client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
 
-    # Fetch user's first name
-    user_first_name = message.from_user.first_name
+    # Create the mention for the user
+    user_mention = f"<a href='tg://user?id={user_id}'>{escape(message.from_user.first_name)}</a>"
 
     if user_id in SUDO_USERS or user_id == OWNER_ID or approved_users.find_one({"chat_id": chat_id, "user_id": user_id}):
         # Don't delete message if it's from owner, sudo users, or approved users
         return
+
     # Delete the edited message
     await message.delete()
-    # Mention the user with their first name and user ID
-    await message.reply_text(f"{user_first_name} (ID: {user_id}) just edited a message. I deleted their message.")
+
+    # Send a message with the user mention
+    await message.reply_text(f"{user_mention} just edited a message. I deleted their message.", parse_mode="HTML")
+
+app.run() # Client Rin
