@@ -20,7 +20,7 @@ app = Client(
     "EditDeleterBot",
     api_id=api_id,
     api_hash=api_hash,
-    bot_token=bot_token",
+    bot_token=bot_token,
 )
 
 OWNER_ID = 6346273488  # Replace with your Telegram user ID
