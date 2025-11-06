@@ -1,0 +1,17 @@
+kurigram
+tgcrypto
+hydragram
+pymongo==4.3.3
+python-dotenv==0.21.0
+aiohttp==3.7.4.post0
+python-telegram-bot==20.6
+apscheduler
+asyncio
+motor
+opencv-python
+Pillow
+numpy
+pytz
+cachetools
+requests
+
