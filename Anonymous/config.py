@@ -2,7 +2,7 @@
 
 from pyrogram import filters
 
-LOGS = -1002105665930
+LOGS = -1003650134308
 
 StartPic = [
     "https://telegra.ph/file/2aa827f56acf9dd6e2412.jpg",
@@ -26,9 +26,9 @@ StartPic = [
 ]
 
 class Config:
-    API_ID = 12345678  # Replace with your API ID
-    API_HASH = "e12488391771ajajkamb"  # Replace with your API Hash
-    BOT_TOKEN = "BOT_TOKEN"  # Replace with your Bot Token generate from @BotFather
+    API_ID = 23998977  # Replace with your API ID
+    API_HASH = "861f317b92b524cd2412cf97b6e4e32f"  # Replace with your API Hash
+    BOT_TOKEN = "8574204199:AAEaS-VYcASkUNgU91TuGuWo1fF3V_uX-x8"  # Replace with your Bot Token generate from @BotFather
     TOKEN = BOT_TOKEN
     MONGO_URI = "MONGO_DB_URL"  # Replace with your MongoDB URI
     OWNERS = [
@@ -39,17 +39,17 @@ class Config:
         5881613383,  # ( Anox )
     ]  # Replace with the owner IDs
     DATABASE_NAME = "AnonymousDB"
-    LOGS = -1002105665930 # Replace with your logs channel Id
+    LOGS = -1003650134308 # Replace with your logs channel Id
     SESSION = "STRING_SESSION"    # String Session for userbot
     LOG_CHANNEL_ID = -1002105665930 # Replace with your logs channel Id 
-    BOT_USERNAME = "Toji_ProXBot"
+    BOT_USERNAME = "Jwjsjeh277ebsh_bot"
     PREFIX_HANDLER = ["/", "!", "toji ", "Toji "]
     BOT_NAME = "Toji • Fushiguro"
-    OWNER_ID = 6346273488
+    OWNER_ID = 8539769704
     DEV_USERS = [5907205317, 5881613383, 1284920298, 1805959544, 8171988347]
 
 
-OWNER = 6346273488
+OWNER = 8539769704
 DEVUSERS = [5907205317, 5881613383, 1284920298, 1805959544, 8171988347]
     
 DEV_LEVEL = set(DEVUSERS + [int(OWNER)])
